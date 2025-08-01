@@ -5,14 +5,14 @@ metadata:
   namespace: argocd
 spec:
   generators:
-  - list:
-      elements:
-      - env: dev
-        namespace: dev
-      - env: staging
-        namespace: staging
-      - env: prod
-        namespace: prod
+    - list:
+        elements:
+          - env: dev
+            namespace: dev
+          - env: staging
+            namespace: staging
+          - env: prod
+            namespace: prod
   template:
     metadata:
       name: 'argocd-demo-{{env}}'
@@ -36,3 +36,4 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
+
