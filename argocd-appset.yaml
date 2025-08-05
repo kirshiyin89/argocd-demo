@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: argocd-demo-set
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - env: dev
+            namespace: dev
+          - env: staging
+            namespace: staging
+          - env: prod
+            namespace: prod
+  template:
+    metadata:
+      name: 'argocd-demo-{{env}}'
+      namespace: argocd
+      annotations:
+        argocd.argoproj.io/sync-options: Prune=false, Replace=true, CreateNamespace=true
+        argocd.argoproj.io/sync-wave: "1"
+        notifications.argoproj.io/subscribe.on-sync-succeeded.slack: app-demo
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/kirshiyin89/argocd-demo.git
+        targetRevision: HEAD
+        path: argocd-demo/overlays/{{env}}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+
